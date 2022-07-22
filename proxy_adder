@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+echo "Adding proxies";
+echo "PASSWORD" | sudo -S /home/rb/Desktop/Files/Proxy/proxy_setter.py 1;

@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+echo "Removing proxies";
+echo "PASSWORD" | sudo -S /home/rb/Desktop/Files/Proxy/proxy_setter.py 2;
