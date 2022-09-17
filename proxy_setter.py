@@ -1,17 +1,6 @@
 #!/usr/bin/python3
 
 """
-created by :
-Nityananda Gohain 
-School of Engineering, Tezpur University
-27/10/17
-"""
-
-
-# run it as sudo
-
-
-"""
 Three files will be modified
 1) /etc/apt/apt.conf
 2) /etc/environment
