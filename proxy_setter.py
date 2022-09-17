@@ -27,11 +27,11 @@ import os
 import os.path  # for checking if file is present or not
 
 apt_ = r'/etc/apt/apt.conf'
-apt_backup = r'/home/rb/Desktop/Files/Proxy/.backup_proxy/apt.txt'
+apt_backup = r'./.backup_proxy/apt.txt'
 bash_ = r'/etc/bash.bashrc'
-bash_backup = r'/home/rb/Desktop/Files/Proxy/.backup_proxy/bash.txt'
+bash_backup = r'./.backup_proxy/bash.txt'
 env_ = r'/etc/environment'
-env_backup = r'/home/rb/Desktop/Files/Proxy/.backup_proxy/env.txt'
+env_backup = r'./.backup_proxy/env.txt'
 
 
 # This function directly writes to the apt.conf file
@@ -43,9 +43,9 @@ def writeToApt(proxy, port, flag):
         filepointer.write(
             'Acquire::https::proxy  "http://{0}:{1}/";\n'.format(proxy, port))
         filepointer.write(
-            'Acquire::ftp::proxy  "http://{0}:{1}/";\n'.format(proxy, port))
+            'Acquire::ftp::proxy  "ftp://{0}:{1}/";\n'.format(proxy, port))
         filepointer.write(
-            'Acquire::socks::proxy  "http://{0}:{1}/";\n'.format(proxy, port))
+            'Acquire::socks::proxy  "socks://{0}:{1}/";\n'.format(proxy, port))
     filepointer.close()
 
 
@@ -69,9 +69,9 @@ def writeToEnv(proxy, port, flag):
         filepointer.write(
             'https_proxy="http://{0}:{1}/"\n'.format(proxy, port))
         filepointer.write(
-            'ftp_proxy="http://{0}:{1}/"\n'.format(proxy, port))
+            'ftp_proxy="ftp://{0}:{1}/"\n'.format(proxy, port))
         filepointer.write(
-            'socks_proxy="http://{0}:{1}/"\n'.format(proxy, port))
+            'socks_proxy="socks://{0}:{1}/"\n'.format(proxy, port))
         filepointer.close()
 
 
@@ -82,22 +82,25 @@ def writeToBashrc(proxy, port, flag):
         lines = opened_file.readlines()
         opened_file.seek(0)
         for line in lines:
-            if r"http://" not in line and r'"https://' not in line and r"ftp://" not in line and r"socks://" not in line:
+            if r"http://" not in line and r'"https://' not in line and r"ftp://" not in line and r"socks://" not in line and "unset http_proxy" not in line and "unset https_proxy" not in line and "unset ftp_proxy" not in line:
                 opened_file.write(line)
         opened_file.truncate()
 
     # writing starts
+    filepointer = open(bash_, "a")
     if not flag:
-        filepointer = open(bash_, "a")
         filepointer.write(
             'export http_proxy="http://{0}:{1}/"\n'.format(proxy, port))
         filepointer.write(
             'export https_proxy="http://{0}:{1}/"\n'.format(proxy, port))
         filepointer.write(
-            'export ftp_proxy="http://{0}:{1}/"\n'.format(proxy, port))
+            'export ftp_proxy="ftp://{0}:{1}/"\n'.format(proxy, port))
         filepointer.write(
-            'export socks_proxy="http://{0}:{1}/"\n'.format(proxy, port))
-        filepointer.close()
+            'export socks_proxy="socks://{0}:{1}/"\n'.format(proxy, port))
+    else:
+        filepointer.write(
+            'unset http_proxy\nunset https_proxy\nunset ftp_proxy')
+    filepointer.close()
 
 
 def set_proxy(flag):
@@ -135,8 +138,8 @@ def restore_default():
 if __name__ == "__main__":
 
     # create backup	if not present
-    if not os.path.isdir("/home/rb/Desktop/Files/Proxy/.backup_proxy"):
-        os.makedirs("/home/rb/Desktop/Files/Proxy/.backup_proxy")
+    if not os.path.isdir("./.backup_proxy"):
+        os.makedirs("./.backup_proxy")
         if os.path.isfile(apt_):
             shutil.copyfile(apt_, apt_backup)
         shutil.copyfile(env_, env_backup)

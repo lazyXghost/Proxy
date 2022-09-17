@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
 echo "Removing proxies";
-echo "PASSWORD" | sudo -S /home/<file path> 2;
+echo "lazyghost" | sudo -S python3 proxy_setter.py 2;
