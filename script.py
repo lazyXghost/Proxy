@@ -7,26 +7,26 @@ Three files will be modified
 3) /etc/bash.bashrc
 """
 
-# This files takes the location as input and writes the proxy authentication
-
-import getpass  # for taking password input
-import shutil  # for copying file
-import sys
 import os
-import os.path  # for checking if file is present or not
+from dotenv import load_dotenv
+load_dotenv()
+
+proxy = os.environ['proxy']
+port = os.environ['port']
+proxy_ssid = os.environ['proxy_ssid']
+gateway_username = os.environ['gateway_username']
+gateway_password = os.environ['gateway_password']
 
 apt_ = r'/etc/apt/apt.conf'
-apt_backup = r'./.backup_proxy/apt.txt'
 bash_ = r'/etc/bash.bashrc'
-bash_backup = r'./.backup_proxy/bash.txt'
 env_ = r'/etc/environment'
-env_backup = r'./.backup_proxy/env.txt'
-
 
 # This function directly writes to the apt.conf file
-def writeToApt(proxy, port, flag):
+
+
+def writeToApt(flag):
     filepointer = open(apt_, "w")
-    if not flag:
+    if flag:
         filepointer.write(
             'Acquire::http::proxy "http://{0}:{1}/";\n'.format(proxy, port))
         filepointer.write(
@@ -37,10 +37,11 @@ def writeToApt(proxy, port, flag):
             'Acquire::socks::proxy  "socks://{0}:{1}/";\n'.format(proxy, port))
     filepointer.close()
 
-
 # This function writes to the environment file
 # Fist deletes the lines containng http:// , https://, ftp://
-def writeToEnv(proxy, port, flag):
+
+
+def writeToEnv(flag):
     # find and delete line containing http://, https://, ftp://
     with open(env_, "r+") as opened_file:
         lines = opened_file.readlines()
@@ -51,7 +52,7 @@ def writeToEnv(proxy, port, flag):
         opened_file.truncate()
 
     # writing starts
-    if not flag:
+    if flag:
         filepointer = open(env_, "a")
         filepointer.write(
             'http_proxy="http://{0}:{1}/"\n'.format(proxy, port))
@@ -64,8 +65,7 @@ def writeToEnv(proxy, port, flag):
         filepointer.close()
 
 
-# This function will write to the
-def writeToBashrc(proxy, port, flag):
+def writeToBashrc(flag):
     # find and delete http:// , https://, ftp://
     with open(bash_, "r+") as opened_file:
         lines = opened_file.readlines()
@@ -77,7 +77,7 @@ def writeToBashrc(proxy, port, flag):
 
     # writing starts
     filepointer = open(bash_, "a")
-    if not flag:
+    if flag:
         filepointer.write(
             'export http_proxy="http://{0}:{1}/"\n'.format(proxy, port))
         filepointer.write(
@@ -90,68 +90,34 @@ def writeToBashrc(proxy, port, flag):
         filepointer.write(
             'unset http_proxy\nunset https_proxy\nunset ftp_proxy')
     filepointer.close()
+ 
 
 
-def set_proxy(flag):
-    proxy, port, username, password = "", "", "", ""
-    if not flag:
-        proxy = "gateway.iitmandi.ac.in"
-        port = "8080"
-    writeToApt(proxy, port, flag)
-    writeToEnv(proxy, port, flag)
-    writeToBashrc(proxy, port, flag)
-
-
-def view_proxy():
-    # finds the size of apt file
-    size = os.path.getsize(apt_)
-    if size:
-        filepointer = open(apt_, "r")
-        string = filepointer.readline()
-        print('\nHTTP Proxy: ' + string[string.rfind('@')+1 : string.rfind(':')])
-        print('Port: ' + string[string.rfind(':')+1 : string.rfind('/')])
-        filepointer.close()
+def change_proxy(flag):
+    if flag:
+        print("Setting Proxy")
     else:
-        print("No proxy is set")
+        print("Removing Proxy")
 
-def restore_default():
-    # copy from backup to main
-    shutil.copy(apt_backup, apt_)
-    shutil.copy(env_backup, env_)
-    shutil.copy(bash_backup, bash_)
+    writeToApt(flag)
+    writeToEnv(flag)
+    writeToBashrc(flag)
 
 
-# The main Function Starts
+def shouldSetProxy():
+    import subprocess
+    import re
+    try:
+        iwgetid_output = subprocess.check_output('iwgetid').decode()
+        network_ssid = re.findall(
+            'ESSID:"(.*)"', iwgetid_output)[0].replace(" ", "")
+        if network_ssid == proxy_ssid:
+            return True
+    except:
+        return False
+    return False
 
 
 if __name__ == "__main__":
-
-    # create backup	if not present
-    if not os.path.isdir("./.backup_proxy"):
-        os.makedirs("./.backup_proxy")
-        if os.path.isfile(apt_):
-            shutil.copyfile(apt_, apt_backup)
-        shutil.copyfile(env_, env_backup)
-        shutil.copyfile(bash_, bash_backup)
-
-    # choice
-    # print("Please run this program as Super user(sudo)\n")
-    # print("1:) Set Proxy")
-    # print("2:) Remove Proxy")
-    # print("3:) View Current Proxy")
-    # print("4:) Restore Default")
-    # print("5:) Exit")
-    choice = int(sys.argv[1])
-
-    if(choice == 1):
-        set_proxy(flag=0)
-    elif(choice == 2):
-        set_proxy(flag=1)
-    elif(choice == 3):
-        view_proxy()
-    elif(choice == 4):
-        restore_default()
-    else:
-        sys.exit()
-
+    change_proxy(shouldSetProxy())
     print("DONE!")

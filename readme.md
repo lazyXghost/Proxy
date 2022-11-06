@@ -1,12 +1,8 @@
 # Proxy setup in ubuntu
+## Gateway login only works in brave browser
 
-open proxy_adder, proxy_remover first and add your sudo password in PASSWORD in line 4 <br>
-now add file path to proxy_setter.py in both proxy_adder and proxy_remover <br>
-Now just do 
-```bash proxy_adder```
-It will set proxy everywhere in your computer.
+1) sudo pip install python-dotenv
+2) sudo apt install xdotool
+3) setup .env files
+4) now run bash proxy_setter.sh
 
-
-
-# Removing proxy 
-```bash proxy_remover```

@@ -1,4 +1,0 @@
-#!/bin/sh -e
-
-echo "Adding proxies";
-echo "lazyghost" | sudo python3 ./proxy_setter.py 1;

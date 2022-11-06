@@ -1,4 +1,0 @@
-Acquire::http::proxy "http://gateway.iitmandi.ac.in:8080/";
-Acquire::https::proxy  "http://gateway.iitmandi.ac.in:8080/";
-Acquire::ftp::proxy  "http://gateway.iitmandi.ac.in:8080/";
-Acquire::socks::proxy  "http://gateway.iitmandi.ac.in:8080/";

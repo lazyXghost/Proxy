@@ -1,4 +1,0 @@
-#!/bin/sh -e
-
-echo "Removing proxies";
-echo "lazyghost" | sudo -S python3 proxy_setter.py 2;
