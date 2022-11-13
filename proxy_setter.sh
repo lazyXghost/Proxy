@@ -1,8 +1,9 @@
 #! usr/bin/bash
-
-if [ -f .env ]
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+env="${SCRIPT_DIR}/.env"
+if [ -f $env ]
 then
-    export $(grep -v '^#' .env | xargs)
+    export $(grep -v '^#' $env | xargs)
 else
     echo ".env file does not exists"
 fi
@@ -100,4 +101,4 @@ else
     set_gsettings "none" "''" "0"
 fi
 
-echo $sudo_password | sudo -S ./script.py
+echo $sudo_password | sudo -S "${SCRIPT_DIR}/script.py"
