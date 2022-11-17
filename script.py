@@ -13,7 +13,8 @@ load_dotenv()
 
 proxy = os.environ['proxy']
 port = os.environ['port']
-proxy_ssid = os.environ['proxy_ssid']
+proxy_ssid1 = os.environ['proxy_ssid1']
+proxy_ssid2 = os.environ['proxy_ssid2']
 gateway_username = os.environ['gateway_username']
 gateway_password = os.environ['gateway_password']
 
@@ -111,7 +112,7 @@ def shouldSetProxy():
         iwgetid_output = subprocess.check_output('iwgetid').decode()
         network_ssid = re.findall(
             'ESSID:"(.*)"', iwgetid_output)[0].replace(" ", "")
-        if network_ssid == proxy_ssid:
+        if network_ssid == proxy_ssid1 or network_ssid == proxy_ssid2:
             return True
     except:
         return False

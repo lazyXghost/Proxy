@@ -92,7 +92,7 @@ gateway_login() {
 }
 
 ssid=$( get_network_ssid_without_spaces )
-if [ $ssid == $proxy_ssid ];
+if [ $ssid == $proxy_ssid1  ] | [ $ssid == $proxy_ssid2 ];
 then 
     set_gsettings "manual" "$proxy" "$port"
     close_all_active_gateway_windows
