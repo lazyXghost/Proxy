@@ -92,13 +92,20 @@ gateway_login() {
 }
 
 ssid=$( get_network_ssid_without_spaces )
-if [ $ssid == $proxy_ssid1  ] | [ $ssid == $proxy_ssid2 ];
+if [ $ssid == $proxy_ssid1  ];
 then 
     set_gsettings "manual" "$proxy" "$port"
     close_all_active_gateway_windows
     gateway_login
 else
-    set_gsettings "none" "''" "0"
+    if [ $ssid == $proxy_ssid2 ];
+    then
+        set_gsettings "manual" "$proxy" "$port"
+    	close_all_active_gateway_windows
+    	gateway_login
+    else
+        set_gsettings "none" "''" "0"
+    fi
 fi
 
 echo $sudo_password | sudo -S "${SCRIPT_DIR}/script.py"
